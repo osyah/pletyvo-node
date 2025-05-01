@@ -1,0 +1,22 @@
+{
+  "node": {
+    "store": {
+      "pebble": {"dirname": ".pletyvo/store/pebble"}
+    },
+    "server": {
+      "address": "localhost:8049",
+      "fiber": {
+        "prefork": false,
+        "body_limit": 1024,
+        "concurrency": 1024,
+        "app_name": "Вузол Плетива"
+      },
+      "cors": {
+        "origins": [],
+        "methods": ["GET", "POST"],
+        "headers": ["Network"],
+        "credentials": false
+      }
+    }
+  }
+}
