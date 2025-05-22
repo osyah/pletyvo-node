@@ -10,7 +10,7 @@ import (
 	"github.com/osyah/hryzun"
 )
 
-func marshalDAppEvent(event *dapp.SystemEvent) []byte {
+func marshalDAppEvent(event *dapp.EventInput) []byte {
 	m := mp.Get()
 
 	mm := m.MessageMarshaler()
@@ -28,7 +28,7 @@ func marshalDAppEvent(event *dapp.SystemEvent) []byte {
 	return dst
 }
 
-func (DAppEvent) unmarshal(src []byte, event *dapp.Event) (err error) {
+func unmarshalDAppEvent(src []byte, event *dapp.Event) (err error) {
 	var fc easyproto.FieldContext
 
 	for len(src) > 0 {
@@ -36,7 +36,7 @@ func (DAppEvent) unmarshal(src []byte, event *dapp.Event) (err error) {
 		if err != nil {
 			return hryzun.NewStatus(
 				pletyvo.CodeInternal,
-				"pletyvo-node/store/pebble: cannot read next DAppEvent field",
+				"pletyvo-node/store/pebble: cannot read next dApp event.field",
 			)
 		}
 
@@ -46,7 +46,7 @@ func (DAppEvent) unmarshal(src []byte, event *dapp.Event) (err error) {
 			if !ok {
 				return hryzun.NewStatus(
 					pletyvo.CodeInternal,
-					"pletyvo-node/store/pebble: cannot read DAppEvent body",
+					"pletyvo-node/store/pebble: cannot read dApp event.body",
 				)
 			}
 
@@ -56,7 +56,7 @@ func (DAppEvent) unmarshal(src []byte, event *dapp.Event) (err error) {
 			if !ok {
 				return hryzun.NewStatus(
 					pletyvo.CodeInternal,
-					"pletyvo-node/store/pebble: cannot read DAppEvent auth",
+					"pletyvo-node/store/pebble: cannot read dApp event.auth",
 				)
 			}
 
@@ -77,7 +77,7 @@ func unmarshalDAppAuth(src []byte, auth *dapp.AuthHeader) (err error) {
 		if err != nil {
 			return hryzun.NewStatus(
 				pletyvo.CodeInternal,
-				"pletyvo-node/store/pebble: cannot read next DApp auth field",
+				"pletyvo-node/store/pebble: cannot read next dApp auth field",
 			)
 		}
 
@@ -87,7 +87,7 @@ func unmarshalDAppAuth(src []byte, auth *dapp.AuthHeader) (err error) {
 			if !ok {
 				return hryzun.NewStatus(
 					pletyvo.CodeInternal,
-					"pletyvo-node/store/pebble: cannot read DApp auth.schema",
+					"pletyvo-node/store/pebble: cannot read dApp auth.schema",
 				)
 			}
 
@@ -97,7 +97,7 @@ func unmarshalDAppAuth(src []byte, auth *dapp.AuthHeader) (err error) {
 			if !ok {
 				return hryzun.NewStatus(
 					pletyvo.CodeInternal,
-					"pletyvo-node/store/dapppebble: cannot read DApp auth.public_key",
+					"pletyvo-node/store/dapppebble: cannot read dApp auth.public_key",
 				)
 			}
 
@@ -107,7 +107,7 @@ func unmarshalDAppAuth(src []byte, auth *dapp.AuthHeader) (err error) {
 			if !ok {
 				return hryzun.NewStatus(
 					pletyvo.CodeInternal,
-					"pletyvo-node/store/pebble: cannot read DApp auth.signature",
+					"pletyvo-node/store/pebble: cannot read dApp auth.signature",
 				)
 			}
 

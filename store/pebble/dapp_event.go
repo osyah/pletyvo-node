@@ -77,7 +77,7 @@ func (dae DAppEvent) Get(ctx context.Context, option *pletyvo.QueryOption) ([]*d
 	for i := 0; i < option.Limit; i++ {
 		var event dapp.Event
 
-		if err := dae.unmarshal(iter.Value(), &event); err != nil {
+		if err := unmarshalDAppEvent(iter.Value(), &event); err != nil {
 			return nil, err
 		}
 
@@ -106,7 +106,7 @@ func (dae DAppEvent) GetByID(ctx context.Context, id uuid.UUID) (*dapp.Event, er
 
 	var event dapp.Event
 
-	if err := dae.unmarshal(b, &event); err != nil {
+	if err := unmarshalDAppEvent(b, &event); err != nil {
 		return nil, err
 	}
 
@@ -130,7 +130,7 @@ func (dae DAppEvent) Create(ctx context.Context, event *dapp.SystemEvent) error 
 }
 
 func saveEventAndHash(batch *pebble.Batch, network pletyvo.Network, event *dapp.SystemEvent, aggregate *uuid.UUID) {
-	batch.Set(dAppEventKey(network, &event.ID, 0), marshalDAppEvent(event), nil)
+	batch.Set(dAppEventKey(network, &event.ID, 0), marshalDAppEvent(event.EventInput), nil)
 
 	data := make([]byte, 32)
 	copy(data[:16], event.ID[:])

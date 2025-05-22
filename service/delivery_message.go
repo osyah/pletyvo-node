@@ -19,13 +19,13 @@ func NewDeliveryMessage(repos delivery.MessageRepository) *DeliveryMessage {
 	return &DeliveryMessage{repos: repos}
 }
 
-func (dm DeliveryMessage) Get(ctx context.Context, id uuid.UUID, option *pletyvo.QueryOption) ([]*delivery.Message, error) {
+func (dm DeliveryMessage) Get(ctx context.Context, id uuid.UUID, option *pletyvo.QueryOption) ([]*dapp.Event, error) {
 	option.Prepare()
 
 	return dm.repos.Get(ctx, id, option)
 }
 
-func (dm DeliveryMessage) GetByID(ctx context.Context, channel uuid.UUID, id uuid.UUID) (*delivery.Message, error) {
+func (dm DeliveryMessage) GetByID(ctx context.Context, channel uuid.UUID, id uuid.UUID) (*dapp.Event, error) {
 	return dm.repos.GetByID(ctx, channel, id)
 }
 

@@ -7,7 +7,7 @@ require (
 	github.com/cockroachdb/pebble v1.1.5
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/google/uuid v1.6.0
-	github.com/osyah/go-pletyvo v0.1.0
+	github.com/osyah/go-pletyvo v0.1.1
 	github.com/osyah/hryzun v0.1.0
 	github.com/rs/zerolog v1.34.0
 )

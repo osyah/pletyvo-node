@@ -38,13 +38,13 @@ func (dm DeliveryMessage) key(network pletyvo.Network, channel, id *uuid.UUID, s
 	return key
 }
 
-func (dm DeliveryMessage) Get(ctx context.Context, ch uuid.UUID, opt *pletyvo.QueryOption) ([]*delivery.Message, error) {
+func (dm DeliveryMessage) Get(ctx context.Context, ch uuid.UUID, opt *pletyvo.QueryOption) ([]*dapp.Event, error) {
 	network, ok := ctx.Value(pletyvo.ContextKeyNetwork).(pletyvo.Network)
 	if !ok {
 		network = pletyvo.DefaultNetwork
 	}
 
-	messages := make([]*delivery.Message, 0, opt.Limit)
+	events := make([]*dapp.Event, 0, opt.Limit)
 
 	iter, err := dm.db.NewIterWithContext(ctx, &pebble.IterOptions{
 		LowerBound: dm.key(network, &ch, &opt.After, 0),
@@ -78,23 +78,23 @@ func (dm DeliveryMessage) Get(ctx context.Context, ch uuid.UUID, opt *pletyvo.Qu
 	}
 
 	for i := 0; i < opt.Limit; i++ {
-		var message delivery.Message
+		var event dapp.Event
 
-		if err := dm.unmarshal(iter.Value(), &message); err != nil {
+		if err := unmarshalDAppEvent(iter.Value(), &event); err != nil {
 			return nil, err
 		}
 
-		messages = append(messages, &message)
+		events = append(events, &event)
 
 		if !next() {
 			break
 		}
 	}
 
-	return messages, nil
+	return events, nil
 }
 
-func (dm DeliveryMessage) GetByID(ctx context.Context, ch, id uuid.UUID) (*delivery.Message, error) {
+func (dm DeliveryMessage) GetByID(ctx context.Context, ch, id uuid.UUID) (*dapp.Event, error) {
 	network, ok := ctx.Value(pletyvo.ContextKeyNetwork).(pletyvo.Network)
 	if !ok {
 		network = pletyvo.DefaultNetwork
@@ -106,13 +106,13 @@ func (dm DeliveryMessage) GetByID(ctx context.Context, ch, id uuid.UUID) (*deliv
 	}
 	defer closer.Close()
 
-	var message delivery.Message
+	var event dapp.Event
 
-	if err := dm.unmarshal(b, &message); err != nil {
+	if err := unmarshalDAppEvent(b, &event); err != nil {
 		return nil, err
 	}
 
-	return &message, nil
+	return &event, nil
 }
 
 func (dm DeliveryMessage) Create(ctx context.Context, message *dapp.EventInput, input *delivery.MessageInput) error {
@@ -131,7 +131,7 @@ func (dm DeliveryMessage) Create(ctx context.Context, message *dapp.EventInput, 
 	_, closer, err := dm.db.Get(key)
 	if err != nil {
 		if err == pebble.ErrNotFound {
-			return dm.db.Set(key, dm.marshal(message), pebble.Sync)
+			return dm.db.Set(key, marshalDAppEvent(message), pebble.Sync)
 		}
 
 		return err
